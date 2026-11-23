@@ -1,0 +1,104 @@
+.page {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: #d9ebf8;
+}
+
+.xr {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 1;
+}
+
+.work-switcher {
+  position: absolute;
+  top: calc(env(safe-area-inset-top) + 16px);
+  left: 0;
+  right: 0;
+  z-index: 10;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  pointer-events: auto;
+}
+
+.work-dot {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: 3px solid rgba(255, 255, 255, 0.7);
+  box-sizing: border-box;
+  opacity: 0.75;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.work-dot--active {
+  opacity: 1;
+  transform: scale(1.15);
+  border-color: #fff;
+}
+
+.toolbar {
+  position: absolute;
+  left: 50%;
+  bottom: calc(env(safe-area-inset-bottom) + 20px);
+  transform: translateX(-50%);
+  z-index: 10;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.72);
+  border-radius: 40px;
+  backdrop-filter: blur(8px);
+  max-width: calc(100vw - 24px);
+  flex-wrap: nowrap;
+}
+
+.toolbar__spacer {
+  width: 8px;
+  height: 1px;
+}
+
+.btn {
+  width: 60px;
+  height: 60px;
+  min-width: 60px;
+  min-height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  background: rgba(255, 255, 255, 0.95);
+  box-sizing: border-box;
+  border: 3px solid transparent;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.btn--active {
+  border-color: #4ecdc4;
+  transform: scale(1.1);
+}
+
+.btn--primary {
+  background: #fff;
+  border-color: #ffe66d;
+}
+
+.btn--speed {
+  font-size: 26px;
+}
+
+.btn--speed-on {
+  transform: scale(1.2);
+  border-color: #f38181;
+}
+
+.btn:active {
+  transform: scale(0.92);
+}

@@ -1,0 +1,81 @@
+<view class="page" bindtap="onPageTap">
+  <!-- Work switcher (top) — color dots only, no text -->
+  <view class="work-switcher" catchtap="noop">
+    <view
+      wx:for="{{works}}"
+      wx:key="id"
+      class="work-dot {{workIndex === index ? 'work-dot--active' : ''}}"
+      style="background: linear-gradient(135deg, {{item.swatch[0]}}, {{item.swatch[1]}});"
+      data-index="{{index}}"
+      catchtap="onSwitchWork"
+    />
+  </view>
+
+  <!-- Fullscreen XR scene (only one xr-frame in the app) -->
+  <xr-builder
+    id="builder"
+    class="xr"
+    width="{{renderWidth}}"
+    height="{{renderHeight}}"
+    style="width:{{width}}px;height:{{height}}px;"
+    workIndex="{{workIndex}}"
+    mode="{{mode}}"
+    isAutoPlaying="{{isAutoPlaying}}"
+    isPaused="{{isPaused}}"
+    speedMultiplier="{{speedMultiplier}}"
+    commandSeq="{{commandSeq}}"
+    command="{{command}}"
+    commandArg="{{commandArg}}"
+    bind:scene-ready="onSceneReady"
+    bind:state="onBuilderState"
+    bind:celebrate="onCelebrate"
+    bind:request-pause="onRequestPause"
+    bind:replay-done="onReplayDone"
+  />
+
+  <!-- Child control bar — icons only, ≥60pt targets -->
+  <view class="toolbar" catchtap="noop">
+    <!-- Mode: manual ✋ / watch 👀 -->
+    <view
+      class="btn {{mode === 'manual' ? 'btn--active' : ''}}"
+      catchtap="onModeManual"
+    >✋</view>
+    <view
+      class="btn {{mode === 'watch' ? 'btn--active' : ''}}"
+      catchtap="onModeWatch"
+    >👀</view>
+
+    <view class="toolbar__spacer" />
+
+    <!-- Play / Pause / Replay -->
+    <view class="btn btn--primary" catchtap="onTogglePlay">
+      <text wx:if="{{completed}}">🔄</text>
+      <text wx:elif="{{isPaused || !isAutoPlaying}}">▶️</text>
+      <text wx:else>⏸️</text>
+    </view>
+
+    <!-- Watch-only: prev / next / speed -->
+    <block wx:if="{{mode === 'watch'}}">
+      <view class="btn" catchtap="onPrev">⏪</view>
+      <view class="btn" catchtap="onNext">⏩</view>
+
+      <view class="toolbar__spacer" />
+
+      <view
+        class="btn btn--speed {{speedMultiplier === 0.5 ? 'btn--speed-on' : ''}}"
+        data-speed="0.5"
+        catchtap="onSpeed"
+      >🐢</view>
+      <view
+        class="btn btn--speed {{speedMultiplier === 1 ? 'btn--speed-on' : ''}}"
+        data-speed="1"
+        catchtap="onSpeed"
+      >🐇</view>
+      <view
+        class="btn btn--speed {{speedMultiplier === 2 ? 'btn--speed-on' : ''}}"
+        data-speed="2"
+        catchtap="onSpeed"
+      >🐆</view>
+    </block>
+  </view>
+</view>

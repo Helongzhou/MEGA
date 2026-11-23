@@ -1,0 +1,102 @@
+<xr-scene
+  id="mag-scene"
+  bind:ready="handleReady"
+  bind:tick="handleTick"
+>
+  <xr-assets bind:progress="handleAssetsProgress" bind:loaded="handleAssetsLoaded">
+    <xr-asset-load type="gltf" asset-id="tile-square" src="/assets/tile-square.glb" />
+    <xr-asset-load type="gltf" asset-id="tile-triangle" src="/assets/tile-triangle.glb" />
+    <xr-asset-load type="gltf" asset-id="tile-square-red" src="/assets/tile-square-red.glb" />
+    <xr-asset-load type="gltf" asset-id="tile-square-blue" src="/assets/tile-square-blue.glb" />
+    <xr-asset-load type="gltf" asset-id="tile-square-yellow" src="/assets/tile-square-yellow.glb" />
+    <xr-asset-load type="gltf" asset-id="tile-triangle-green" src="/assets/tile-triangle-green.glb" />
+    <xr-asset-load type="gltf" asset-id="tile-triangle-orange" src="/assets/tile-triangle-orange.glb" />
+  </xr-assets>
+
+  <xr-env env-data="simple" />
+
+  <xr-light type="ambient" color="1 1 1" intensity="1" />
+  <xr-light
+    type="directional"
+    rotation="40 70 0"
+    color="1 1 1"
+    intensity="3"
+    cast-shadow
+  />
+
+  <!-- Camera look-at target (scene origin) -->
+  <xr-node node-id="cam-target" position="0 0.3 0" />
+
+  <!-- Pulse hint at current step target -->
+  <xr-mesh
+    node-id="pulse-hint"
+    geometry="cube"
+    uniforms="u_baseColorFactor:0.4 0.75 0.95 0.3"
+    position="0 -10 0"
+    scale="1 0.15 1"
+    visible="{{pulseVisible}}"
+  />
+
+  <!-- Precreated tile slots (max 20) — filled via JS after assets load -->
+  <xr-node node-id="tiles-root" position="0 0 0">
+    <xr-gltf
+      wx:for="{{tileSlots}}"
+      wx:key="id"
+      id="{{item.id}}"
+      node-id="{{item.id}}"
+      model="{{item.model}}"
+      position="{{item.position}}"
+      rotation="{{item.rotation}}"
+      scale="{{item.scale}}"
+      visible="{{item.visible}}"
+      cast-shadow
+      cube-shape="autoFit:true"
+      bind:touch-shape="handleTouchShape"
+      bind:drag-shape="handleDragShape"
+      bind:untouch-shape="handleUntouchShape"
+      data-slot="{{item.index}}"
+    />
+  </xr-node>
+
+  <!-- Celebration particles (small cubes) -->
+  <xr-node node-id="particles-root">
+    <xr-mesh
+      wx:for="{{particles}}"
+      wx:key="id"
+      node-id="{{item.id}}"
+      geometry="cube"
+      uniforms="{{item.uniforms}}"
+      position="{{item.position}}"
+      scale="{{item.scale}}"
+      visible="{{item.visible}}"
+    />
+  </xr-node>
+
+  <!-- Demo placement for batch-1 verification (hidden once works start) -->
+  <xr-gltf
+    wx:if="{{showDemoTiles}}"
+    node-id="demo-square"
+    model="tile-square"
+    position="-1.5 0 0"
+    cast-shadow
+  />
+  <xr-gltf
+    wx:if="{{showDemoTiles}}"
+    node-id="demo-triangle"
+    model="tile-triangle"
+    position="1.5 0 0"
+    cast-shadow
+  />
+
+  <xr-camera
+    id="main-camera"
+    node-id="main-camera"
+    clear-color="0.85 0.92 0.98 1"
+    position="0 2 6"
+    target="cam-target"
+    background="default"
+    near="0.1"
+    far="100"
+    camera-orbit-control
+  />
+</xr-scene>

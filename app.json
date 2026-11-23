@@ -1,0 +1,14 @@
+{
+  "pages": [
+    "pages/build/index"
+  ],
+  "window": {
+    "navigationBarTitleText": "",
+    "navigationStyle": "custom",
+    "backgroundColor": "#D9EBF8",
+    "backgroundColorTop": "#D9EBF8",
+    "backgroundColorBottom": "#D9EBF8"
+  },
+  "lazyCodeLoading": "requiredComponents",
+  "sitemapLocation": "sitemap.json"
+}

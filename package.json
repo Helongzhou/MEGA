@@ -1,0 +1,15 @@
+{
+  "name": "magnet-tile-builder",
+  "version": "1.0.0",
+  "description": "磁力片儿童搭建小程序 · XR-Frame",
+  "private": true,
+  "scripts": {
+    "generate:assets": "python3 scripts/generate_glb.py",
+    "generate:sounds": "python3 scripts/generate_sounds.py",
+    "generate": "npm run generate:assets && npm run generate:sounds",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.0"
+  }
+}
