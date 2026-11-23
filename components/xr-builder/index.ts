@@ -338,6 +338,8 @@ Component({
     _onModeChange(mode: string) {
       this.virtualProgress = 0;
       this.activePlayer = null;
+      this._pendingAdvance = null;
+      this._holdUntil = 0;
       // Keep scene consistent: gotoStep(currentStep) then re-enter active step
       const step = Math.max(0, Math.min(this.work.steps.length, this.currentStep));
       this.currentStep = step;
