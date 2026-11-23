@@ -57,6 +57,9 @@
   backdrop-filter: blur(8px);
   max-width: calc(100vw - 24px);
   flex-wrap: nowrap;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  box-sizing: border-box;
 }
 
 .toolbar__spacer {

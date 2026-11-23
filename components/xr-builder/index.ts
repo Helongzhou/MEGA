@@ -108,16 +108,16 @@ Component({
       this.tileEls = [] as any[];
       this.particleEls = [] as any[];
       this.work = WORKS[0] as BuildWork;
-      this.currentStep = -1;
+      this.currentStep = 0;
       this.virtualProgress = 0;
       this.activePlayer = null as StepPlayer | null;
       this._tickFns = [] as TickFn[];
       this._holdUntil = 0;
+      this._pendingAdvance = null as number | null;
+      this._completedBoundary = -1;
       this._celebrating = false;
       this._dragging = false;
       this._dragSlot = -1;
-      this._pendingAdvance = null as number | null;
-      this._completedBoundary = -1;
       this._fpsAccum = 0;
       this._fpsFrames = 0;
       this._lastFpsWarn = 0;
@@ -267,6 +267,8 @@ Component({
 
     _applyOrbitLimits() {
       if (!this.cameraEl || !this._customOrbit) return;
+      // Do not fight the celebration orbit
+      if (this._celebrating) return;
       // Pitch 10°~60°, yaw -45°~45°, distance 4~10
       const pitchMin = 10 * (Math.PI / 180);
       const pitchMax = 60 * (Math.PI / 180);
@@ -314,6 +316,9 @@ Component({
       this._celebrating = false;
       this.virtualProgress = 0;
       this.activePlayer = null;
+      this._pendingAdvance = null;
+      this._holdUntil = 0;
+      this._tickFns = [];
       this.gotoStep(-1);
       this.currentStep = -1;
       this._startManualOrWatch();
@@ -559,8 +564,11 @@ Component({
     _commitStep(stepIndex: number) {
       const steps = this.work.steps;
       if (stepIndex < 0 || stepIndex >= steps.length) return;
-      const s = steps[stepIndex];
-      this._setSlotTransform(stepIndex, s.position, s.rotation, true, 1);
+      // Restore full opacity for all settled tiles (were dimmed during guide)
+      for (let i = 0; i <= stepIndex; i++) {
+        const s = steps[i];
+        this._setSlotTransform(i, s.position, s.rotation, true, 1);
+      }
       this._setPulseVisible(false);
       this.activePlayer = null;
       this.virtualProgress = 0;
@@ -569,10 +577,28 @@ Component({
 
     // ---------- Manual drag ----------
 
+    _resolveSlotIndex(e: any): number {
+      const detail = e?.detail?.value || e?.detail || {};
+      const target = detail.target || e?.target;
+      if (target && this.tileEls?.length) {
+        for (let i = 0; i < this.tileEls.length; i++) {
+          const el = this.tileEls[i];
+          if (!el) continue;
+          if (el === target) return i;
+          const id = el.id || el.getAttribute?.('node-id') || el.getAttribute?.('id');
+          const tid = target.id || target.getAttribute?.('node-id') || target.getAttribute?.('id');
+          if (id && tid && id === tid) return i;
+        }
+      }
+      const slot = e?.currentTarget?.dataset?.slot ?? e?.target?.dataset?.slot;
+      if (typeof slot === 'number') return slot;
+      if (slot != null) return parseInt(slot, 10);
+      return -1;
+    },
+
     handleTouchShape(e: any) {
       if (this.data.mode !== 'manual' || this._celebrating) return;
-      const slot = e?.currentTarget?.dataset?.slot ?? e?.target?.dataset?.slot;
-      const idx = typeof slot === 'number' ? slot : parseInt(slot, 10);
+      const idx = this._resolveSlotIndex(e);
       if (idx !== this.currentStep) return;
       this._dragging = true;
       this._dragSlot = idx;
@@ -698,30 +724,42 @@ Component({
       const targetStep = Math.max(0, this.currentStep - 1);
       const fadeIdx = Math.min(this.currentStep, this.work.steps.length - 1);
       const el = this.tileEls[fadeIdx];
-      if (el && fadeIdx >= 0) {
+      this._pendingAdvance = null;
+      this._holdUntil = 0;
+      this.virtualProgress = 0;
+      this.activePlayer = null;
+
+      const finishPrev = () => {
+        this.gotoStep(targetStep);
+        this.currentStep = targetStep;
+        this._prepareStep(targetStep);
+        this.triggerEvent('request-pause', {});
+        this._emitState();
+      };
+
+      // Fade out the revoked tile, then reset — avoid gotoStep killing the fade
+      if (el && fadeIdx >= targetStep && fadeIdx < this.work.steps.length) {
+        this._playSound('slide');
         animateScaleFadeOut(
           el,
           0.3,
           (fn) => this._tickFns.push(fn),
           (e, o) => this._setOpacity(e, o),
           (e, v) => this._setVisible(e, v),
+          finishPrev,
         );
-        this._playSound('slide');
+      } else {
+        finishPrev();
       }
-      // Completed boundary = targetStep → steps [0..targetStep) stay; then prepare active
-      this.gotoStep(targetStep);
-      this.currentStep = targetStep;
-      this._prepareStep(targetStep);
-      this.triggerEvent('request-pause', {});
-      this._emitState();
     },
 
     _stepNext() {
+      this._pendingAdvance = null;
+      this._holdUntil = 0;
       if (this.currentStep < this.work.steps.length) {
         this._commitStep(this.currentStep);
       }
       const next = Math.min(this.work.steps.length, this.currentStep + 1);
-      // Settle through `next` completed boundary
       this.gotoStep(next);
       if (next >= this.work.steps.length) {
         this.currentStep = this.work.steps.length;
@@ -736,6 +774,8 @@ Component({
 
     _replay() {
       this._celebrating = false;
+      this._pendingAdvance = null;
+      this._holdUntil = 0;
       this._hideParticles();
       this.gotoStep(-1);
       this.currentStep = 0;
@@ -868,8 +908,8 @@ Component({
 
       if (this._celebrating) return;
 
-      // Manual hold → auto advance
-      if (this.data.mode === 'manual' && this._pendingAdvance != null) {
+      // Shared hold gate: manual settle OR autoplay inter-step gap (P6 ≥ 1.5s)
+      if (this._pendingAdvance != null) {
         if (Date.now() >= this._holdUntil) {
           this._advanceTo(this._pendingAdvance);
         }
@@ -878,8 +918,8 @@ Component({
 
       if (this.data.mode !== 'watch') return;
       if (!this.data.isAutoPlaying || this.data.isPaused) return;
-
-      if (!this.activePlayer || this.currentStep >= this.work.steps.length) return;
+      if (this.currentStep >= this.work.steps.length) return;
+      if (!this.activePlayer) return;
 
       this.virtualProgress += ((dt / 1000) * this.data.speedMultiplier) / BASE_DURATION;
       if (this.virtualProgress >= 1) {
@@ -893,9 +933,13 @@ Component({
           this._emitState();
           return;
         }
-        this._prepareStep(next);
+        // Hold before next fly-in (plan P6)
+        this._pendingAdvance = next;
+        this._holdUntil = Date.now() + STEP_HOLD_MS;
+        this._setPulseVisible(false);
+        this.activePlayer = null;
         this._emitState();
-      } else if (this.activePlayer) {
+      } else {
         this.activePlayer.setProgress(this.virtualProgress);
       }
     },

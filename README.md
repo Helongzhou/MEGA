@@ -16,9 +16,14 @@
 4. iOS 客户端 ≥ 8.0.36，Android ≥ 8.0.35
 
 ```bash
+# 离线自验收（类型检查 + 6 批次语义）
+npm run verify
+
 # 重新生成磁力片 GLB 与占位音效（可选）
 npm run generate
 ```
+
+详细自验收记录见 [`ACCEPTANCE.md`](./ACCEPTANCE.md)。
 
 ## 工程结构
 
