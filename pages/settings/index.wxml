@@ -1,0 +1,29 @@
+<view class="clay-page">
+  <text class="clay-h">小小建筑师</text>
+  <text class="clay-sub lead">手里现在有 {{pieces}} 片磁力片</text>
+
+  <view class="clay-card card">
+    <view class="row">
+      <text>磁力吸合声音</text>
+      <switch checked="{{soundOn}}" color="#7868F0" bindchange="onSound" />
+    </view>
+    <view class="row">
+      <text>搭建提示</text>
+      <switch checked="{{hintsOn}}" color="#7868F0" bindchange="onHints" />
+    </view>
+    <view class="row">
+      <view class="row__text">
+        <text>公开分享作品</text>
+        <text class="row__sub">暂未开放，开启前仅自己可见</text>
+      </view>
+      <switch checked="{{publicShowcase}}" color="#7868F0" bindchange="onPublic" />
+    </view>
+  </view>
+
+  <view class="clay-card about">
+    <text class="about__title">磁力片奇趣搭建</text>
+    <text class="about__body">从平面图形搭到立体小房子。边对边吸住，才算拼好。</text>
+  </view>
+
+  <view class="danger" catchtap="onReset">清空库存</view>
+</view>

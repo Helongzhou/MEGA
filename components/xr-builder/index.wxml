@@ -4,94 +4,136 @@
   bind:tick="handleTick"
 >
   <xr-assets bind:progress="handleAssetsProgress" bind:loaded="handleAssetsLoaded">
-    <xr-asset-load type="gltf" asset-id="tile-square" src="/assets/tile-square.glb" />
-    <xr-asset-load type="gltf" asset-id="tile-triangle" src="/assets/tile-triangle.glb" />
-    <xr-asset-load type="gltf" asset-id="tile-square-red" src="/assets/tile-square-red.glb" />
-    <xr-asset-load type="gltf" asset-id="tile-square-blue" src="/assets/tile-square-blue.glb" />
-    <xr-asset-load type="gltf" asset-id="tile-square-yellow" src="/assets/tile-square-yellow.glb" />
-    <xr-asset-load type="gltf" asset-id="tile-triangle-green" src="/assets/tile-triangle-green.glb" />
-    <xr-asset-load type="gltf" asset-id="tile-triangle-orange" src="/assets/tile-triangle-orange.glb" />
+    <xr-asset-load type="gltf" asset-id="tile-square" src="assets/tile-square.glb" />
+    <xr-asset-load type="gltf" asset-id="tile-triangle" src="assets/tile-triangle.glb" />
+    <xr-asset-load type="gltf" asset-id="tile-rect" src="assets/tile-rect.glb" />
+    <xr-asset-load type="gltf" asset-id="tile-right" src="assets/tile-right.glb" />
+    <xr-asset-load type="gltf" asset-id="tile-large" src="assets/tile-large.glb" />
+    <xr-asset-load type="gltf" asset-id="tile-hex" src="assets/tile-hex.glb" />
+    <xr-asset-load type="gltf" asset-id="tile-window" src="assets/tile-window.glb" />
+    <xr-asset-load type="gltf" asset-id="tile-square-red" src="assets/tile-square-red.glb" />
+    <xr-asset-load type="gltf" asset-id="tile-square-blue" src="assets/tile-square-blue.glb" />
+    <xr-asset-load type="gltf" asset-id="tile-square-yellow" src="assets/tile-square-yellow.glb" />
+    <xr-asset-load type="gltf" asset-id="tile-triangle-green" src="assets/tile-triangle-green.glb" />
+    <xr-asset-load type="gltf" asset-id="tile-triangle-orange" src="assets/tile-triangle-orange.glb" />
+    <xr-asset-load type="gltf" asset-id="tile-rect-blue" src="assets/tile-rect-blue.glb" />
+    <xr-asset-load type="gltf" asset-id="tile-rect-red" src="assets/tile-rect-red.glb" />
+    <xr-asset-load type="gltf" asset-id="tile-right-green" src="assets/tile-right-green.glb" />
+    <xr-asset-load type="gltf" asset-id="tile-right-orange" src="assets/tile-right-orange.glb" />
+    <xr-asset-load type="gltf" asset-id="tile-large-yellow" src="assets/tile-large-yellow.glb" />
+    <xr-asset-load type="gltf" asset-id="tile-large-orange" src="assets/tile-large-orange.glb" />
+    <xr-asset-load type="gltf" asset-id="tile-hex-green" src="assets/tile-hex-green.glb" />
+    <xr-asset-load type="gltf" asset-id="tile-hex-blue" src="assets/tile-hex-blue.glb" />
+    <xr-asset-load type="gltf" asset-id="tile-window-blue" src="assets/tile-window-blue.glb" />
+    <xr-asset-load type="gltf" asset-id="tile-window-yellow" src="assets/tile-window-yellow.glb" />
   </xr-assets>
 
   <xr-env env-data="simple" />
 
-  <xr-light type="ambient" color="1 1 1" intensity="1" />
+  <!-- Cream stage light: warm key, soft fill, no cool studio cast -->
+  <xr-light type="ambient" color="1 0.96 0.90" intensity="0.78" />
   <xr-light
     type="directional"
-    rotation="40 70 0"
-    color="1 1 1"
-    intensity="3"
-    cast-shadow
+    rotation="42 50 0"
+    color="1 0.97 0.88"
+    intensity="1.85"
+  />
+  <xr-light
+    type="directional"
+    rotation="25 -130 0"
+    color="1 0.94 0.86"
+    intensity="0.42"
   />
 
-  <!-- Camera look-at target (scene origin) -->
-  <xr-node node-id="cam-target" position="0 0.3 0" />
+  <xr-node node-id="cam-target" position="0 0.4 0" />
 
-  <!-- Pulse hint at current step target -->
-  <xr-mesh
-    node-id="pulse-hint"
-    geometry="cube"
-    uniforms="u_baseColorFactor:0.4 0.75 0.95 0.3"
-    position="0 -10 0"
-    scale="1 0.15 1"
-    visible="{{pulseVisible}}"
-  />
-
-  <!-- Precreated tile slots (max 20) — filled via JS after assets load -->
-  <xr-node node-id="tiles-root" position="0 0 0">
-    <xr-gltf
-      wx:for="{{tileSlots}}"
-      wx:key="id"
-      id="{{item.id}}"
-      node-id="{{item.id}}"
-      model="{{item.model}}"
-      position="{{item.position}}"
-      rotation="{{item.rotation}}"
-      scale="{{item.scale}}"
-      visible="{{item.visible}}"
-      cast-shadow
-      cube-shape="autoFit:true"
-      bind:touch-shape="handleTouchShape"
-      bind:drag-shape="handleDragShape"
-      bind:untouch-shape="handleUntouchShape"
-      data-slot="{{item.index}}"
-    />
-  </xr-node>
-
-  <!-- Celebration particles (small cubes) -->
-  <xr-node node-id="particles-root">
+  <!-- Turntable: camera stays fixed; this node yaws so faces meet the viewer -->
+  <xr-node node-id="turntable" position="0 0 0" rotation="0 0 0">
+    <!-- Cream toy table: card top, warm apron, soft contact shade -->
     <xr-mesh
-      wx:for="{{particles}}"
-      wx:key="id"
-      node-id="{{item.id}}"
+      node-id="desk-top"
       geometry="cube"
-      uniforms="{{item.uniforms}}"
-      position="{{item.position}}"
-      scale="{{item.scale}}"
-      visible="{{item.visible}}"
+      position="0 -0.035 0"
+      scale="7.2 0.06 7.2"
+      uniforms="u_baseColorFactor:1 0.973 0.933 1"
     />
+    <xr-mesh
+      node-id="desk-apron"
+      geometry="cube"
+      position="0 -0.12 0"
+      scale="7.0 0.14 7.0"
+      uniforms="u_baseColorFactor:0.906 0.875 0.831 1"
+    />
+    <xr-mesh
+      node-id="desk-shadow"
+      geometry="cube"
+      position="0 -0.002 0"
+      scale="3.2 0.01 3.2"
+      uniforms="u_baseColorFactor:0.72 0.62 0.50 0.16"
+    />
+    <!-- Soft inlay, opaque and lifted so it does not flicker on the table -->
+    <xr-mesh
+      node-id="desk-axis-x"
+      geometry="cube"
+      position="0 0.006 0"
+      scale="4.2 0.012 0.045"
+      uniforms="u_baseColorFactor:0.906 0.875 0.831 1"
+    />
+    <xr-mesh
+      node-id="desk-axis-z"
+      geometry="cube"
+      position="0 0.006 0"
+      scale="0.045 0.012 4.2"
+      uniforms="u_baseColorFactor:0.906 0.875 0.831 1"
+    />
+
+    <!-- ONLY model is data-bound; pose/visible are imperative (anti-vanish). -->
+    <xr-node node-id="tiles-root" position="0 0 0">
+      <xr-gltf
+        wx:for="{{tileSlots}}"
+        wx:key="id"
+        id="{{item.id}}"
+        node-id="{{item.id}}"
+        model="{{item.model}}"
+        cube-shape="autoFit:true"
+        bind:touch-shape="handleTouchShape"
+        bind:drag-shape="handleDragShape"
+        bind:untouch-shape="handleUntouchShape"
+        data-slot="{{item.index}}"
+      />
+    </xr-node>
+
+    <xr-node node-id="particles-root">
+      <xr-mesh
+        wx:for="{{particles}}"
+        wx:key="id"
+        node-id="{{item.id}}"
+        geometry="cube"
+        uniforms="{{item.uniforms}}"
+        position="{{item.position}}"
+        scale="{{item.scale}}"
+        visible="{{item.visible}}"
+      />
+    </xr-node>
   </xr-node>
 
-  <!-- Demo placement for batch-1 verification (hidden once works start) -->
   <xr-gltf
     wx:if="{{showDemoTiles}}"
     node-id="demo-square"
     model="tile-square"
     position="-1.5 0 0"
-    cast-shadow
   />
   <xr-gltf
     wx:if="{{showDemoTiles}}"
     node-id="demo-triangle"
     model="tile-triangle"
     position="1.5 0 0"
-    cast-shadow
   />
 
   <xr-camera
     id="main-camera"
     node-id="main-camera"
-    clear-color="0.85 0.92 0.98 1"
+    clear-color="0.961 0.937 0.902 1"
     position="0 2 6"
     target="cam-target"
     background="default"

@@ -1,0 +1,48 @@
+/**
+ * MEGA UI 2.0 Design Tokens
+ * Cream stage + warm stone chrome (kid toy / Magitile-adjacent).
+ * Do not put chrome over XR canvas — tokens are for layout chrome only.
+ */
+
+page {
+  /* —— Surfaces —— */
+  --mega-chrome: #1c1917;
+  --mega-chrome-elevated: #292524;
+  --mega-stage: #f5efe6;
+  --mega-window: #1c1917;
+
+  /* —— Ink —— */
+  --mega-ink: #1c1917;
+  --mega-ink-inverse: #fafaf9;
+  --mega-ink-muted: #a8a29e;
+  --mega-ink-soft: #f5efe6;
+
+  /* —— Brand accents —— */
+  --mega-accent: #ffe66d;
+  --mega-accent-border: #f0c94d;
+  --mega-accent-warm: #f38181;
+  --mega-accent-warm-soft: #ffe8e6;
+  --mega-accent-teal: #4ecdc4;
+
+  /* —— Controls —— */
+  --mega-btn-face: #f5efe6;
+  --mega-btn-border: #e7dfd4;
+  --mega-btn-primary: var(--mega-accent);
+  --mega-btn-primary-border: var(--mega-accent-border);
+
+  /* —— Radius / space (rpx-friendly px at 1x phone) —— */
+  --mega-radius-pill: 28px;
+  --mega-radius-chip: 22px;
+  --mega-touch: 56px;
+  --mega-gap: 8px;
+  --mega-pad-x: 12px;
+
+  /* —— Type —— */
+  --mega-fs-brand: 18px;
+  --mega-fs-title: 15px;
+  --mega-fs-body: 13px;
+  --mega-fs-caption: 11px;
+  --mega-fs-chip: 15px;
+  --mega-fw-bold: 700;
+  --mega-fw-semi: 600;
+}

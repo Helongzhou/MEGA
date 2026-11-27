@@ -1,0 +1,127 @@
+.face {
+  position: relative;
+  width: 88rpx;
+  height: 88rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.face__glyph {
+  background: var(--face, #38bdf8);
+}
+
+.face--square .face__glyph {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 14rpx;
+  box-shadow: inset 0 0 0 4rpx rgba(255, 255, 255, 0.7);
+}
+
+.face--window .face__glyph {
+  position: relative;
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 12rpx;
+  box-shadow: inset 0 0 0 4rpx rgba(255, 255, 255, 0.75);
+}
+
+.face--window .face__glyph::before,
+.face--window .face__glyph::after {
+  content: '';
+  position: absolute;
+  background: rgba(255, 255, 255, 0.85);
+}
+
+.face--window .face__glyph::before {
+  width: 4rpx;
+  height: 100%;
+  left: 50%;
+  top: 0;
+  transform: translateX(-50%);
+}
+
+.face--window .face__glyph::after {
+  height: 4rpx;
+  width: 100%;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.face--rectangle .face__glyph {
+  width: 80rpx;
+  height: 40rpx;
+  border-radius: 10rpx;
+}
+
+.face--right .face__glyph {
+  width: 0;
+  height: 0;
+  background: transparent;
+  border-style: solid;
+  border-width: 0 0 68rpx 68rpx;
+  border-color: transparent transparent var(--face, #facc15) transparent;
+}
+
+.face--large .face__glyph {
+  width: 0;
+  height: 0;
+  background: transparent;
+  border-style: solid;
+  border-width: 0 28rpx 76rpx 28rpx;
+  border-color: transparent transparent var(--face, #f87171) transparent;
+}
+
+.face--triangle .face__glyph,
+.face--hexagon .face__glyph {
+  box-shadow: 0 0 0 4rpx rgba(88, 28, 135, 0.18);
+}
+
+.face--triangle .face__glyph {
+  width: 0;
+  height: 0;
+  background: transparent;
+  border-style: solid;
+  border-width: 0 36rpx 64rpx 36rpx;
+  border-color: transparent transparent var(--face, #a78bfa) transparent;
+  box-shadow: none;
+}
+
+.face--hexagon .face__glyph {
+  width: 52rpx;
+  height: 30rpx;
+  position: relative;
+}
+
+.face--hexagon .face__glyph::before,
+.face--hexagon .face__glyph::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  width: 0;
+  border-left: 26rpx solid transparent;
+  border-right: 26rpx solid transparent;
+}
+
+.face--hexagon .face__glyph::before {
+  bottom: 100%;
+  border-bottom: 16rpx solid var(--face, #10b981);
+}
+
+.face--hexagon .face__glyph::after {
+  top: 100%;
+  border-top: 16rpx solid var(--face, #10b981);
+}
+
+.face__mm {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  font-size: 16rpx;
+  font-weight: 700;
+  color: #5b21b6;
+  background: #fff;
+  border-radius: 999rpx;
+  padding: 0 6rpx;
+}

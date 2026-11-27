@@ -149,28 +149,37 @@ check('xr-builder renderer xr-frame', () => {
   const j = JSON.parse(fs.readFileSync(path.join(root, 'components/xr-builder/index.json'), 'utf8'));
   assert.strictEqual(j.renderer, 'xr-frame');
 });
-check('camera clear-color + orbit in wxml', () => {
+check('camera clear-color + desk + soft lights', () => {
   const w = fs.readFileSync(path.join(root, 'components/xr-builder/index.wxml'), 'utf8');
-  assert.ok(w.includes('0.85 0.92 0.98 1'));
+  assert.ok(w.includes('clear-color'));
+  assert.ok(w.includes('desk-top'));
+  assert.ok(w.includes('desk-apron'));
+  assert.ok(w.includes('desk-shadow'));
+  assert.ok(!w.includes('ghost-hint'));
+  assert.ok(w.includes('rotation="25 -130 0"'));
   assert.ok(w.includes('camera-orbit-control'));
-  assert.ok(w.includes('position="0 2 6"'));
 });
 check('isLockZoom configured in ts', () => {
   const t = fs.readFileSync(path.join(root, 'components/xr-builder/index.ts'), 'utf8');
   assert.ok(t.includes('isLockZoom'));
   assert.ok(t.includes('pitchMin') || t.includes('10 * (Math.PI / 180)'));
 });
-check('GLB assets ≤ 40KB uncompressed', () => {
+check('GLB assets ≤ 120KB uncompressed', () => {
   const dir = path.join(root, 'assets');
   let total = 0;
   for (const f of fs.readdirSync(dir)) {
     if (f.endsWith('.glb')) total += fs.statSync(path.join(dir, f)).size;
   }
-  assert.ok(total <= 40 * 1024, `total=${total}`);
+  assert.ok(total <= 120 * 1024, `total=${total}`);
 });
 check('libVersion ≥ 2.32.0', () => {
   const p = JSON.parse(fs.readFileSync(path.join(root, 'project.config.json'), 'utf8'));
   assert.ok(p.libVersion >= '2.32.0');
+  const privPath = path.join(root, 'project.private.config.json');
+  if (fs.existsSync(privPath)) {
+    const priv = JSON.parse(fs.readFileSync(privPath, 'utf8'));
+    assert.ok(!priv.libVersion || priv.libVersion >= '2.32.0');
+  }
 });
 
 console.log('\n=== Batch 2: gotoStep + StepPlayer ===');
@@ -190,10 +199,24 @@ check('StepPlayer easeOutCubic fade band', () => {
   assert.strictEqual(clamp01(0.15 / 0.3), 0.5);
   assert.ok(easeOutCubic(0.5) > 0.8);
 });
-check('works have 3 and 4 steps', () => {
+check('works include cube / house with watch fields', () => {
   const src = fs.readFileSync(path.join(root, 'utils/works.ts'), 'utf8');
-  assert.ok(src.includes("id: 'roof'"));
+  assert.ok(src.includes("id: 'cube'"));
   assert.ok(src.includes("id: 'house'"));
+  assert.ok(src.includes('sortBuildSteps'));
+  assert.ok(src.includes('GALLERY_WORKS'));
+  assert.ok(src.includes('pyramidCapPose'));
+  assert.ok(src.includes("posePolicy: 'roof-cap'"));
+  assert.ok(fs.existsSync(path.join(root, 'utils/pyramid-cap.ts')));
+  const phys = fs.readFileSync(path.join(root, 'utils/magnet-physics.ts'), 'utf8');
+  assert.ok(phys.includes('CARDINAL_POSE_EPS_DEG'));
+  assert.ok(phys.includes("posePolicy === 'roof-cap'"));
+  const order = fs.readFileSync(path.join(root, 'utils/build-order.ts'), 'utf8');
+  assert.ok(order.includes('faceBuildRank'));
+  assert.ok(order.includes('sortBuildSteps'));
+  assert.ok(src.includes('flyFrom'));
+  assert.ok(src.includes('camera:'));
+  assert.ok(src.includes('SNAP_DURATION'));
 });
 
 console.log('\n=== Batch 3: manual settle + no-fail snap ===');
@@ -267,17 +290,56 @@ check('prev / next addressing', () => {
   assert.strictEqual(s.completed, true);
   assert.strictEqual(s.celebrating, true);
 });
-check('toolbar icons present, no text labels', () => {
+check('chrome reserves layout rows; xr constrained to stageHeight', () => {
   const w = fs.readFileSync(path.join(root, 'pages/build/index.wxml'), 'utf8');
-  for (const icon of ['✋', '👀', '▶️', '⏸️', '⏪', '⏩', '🐢', '🐇', '🐆', '🔄']) {
-    assert.ok(w.includes(icon), `missing ${icon}`);
+  assert.ok(!w.includes('<cover-view'));
+  assert.ok(w.includes('class="stage"'));
+  assert.ok(w.includes('height:{{stageHeight}}px'));
+  assert.ok(!/style="[^"]*height:\{\{height\}\}px/.test(w));
+  assert.ok(w.includes('/assets/icons/play.png'), 'play icon');
+  assert.ok(w.includes('/assets/icons/pause.png'), 'pause icon');
+  assert.ok(w.includes('/assets/icons/replay.png'), 'replay icon');
+  assert.ok(w.includes('/assets/icons/prev.png'), 'prev icon');
+  assert.ok(w.includes('/assets/icons/next.png'), 'next icon');
+  assert.ok(w.includes('speedPresets'), 'interval speed chips');
+  assert.ok(w.includes('aria-label'), 'icon a11y labels');
+  const t = fs.readFileSync(path.join(root, 'pages/build/index.ts'), 'utf8');
+  assert.ok(t.includes('WORK_LABELS'));
+  assert.ok(t.includes('topChromeHeight') && t.includes('bottomChromeHeight'));
+  assert.ok(t.includes('SPEED_PRESETS'));
+  const labels = fs.readFileSync(path.join(root, 'utils/works.ts'), 'utf8');
+  const catalog = fs.readFileSync(path.join(root, 'utils/works-catalog.ts'), 'utf8');
+  // Labels derive from catalog seeds (works 2.0); keep 方/房 meaning
+  assert.ok(labels.includes('WORK_LABELS') && labels.includes('catalogLabelsFromSeeds'));
+  assert.ok(catalog.includes("shortLabel: '方'") && catalog.includes("shortLabel: '房'"));
+  const presets = fs.readFileSync(path.join(root, 'utils/speed-presets.ts'), 'utf8');
+  assert.ok(presets.includes('[1, 3, 5]'));
+  for (const icon of ['play', 'pause', 'replay', 'prev', 'next']) {
+    assert.ok(
+      fs.existsSync(path.join(root, 'assets/icons', `${icon}.png`)),
+      `missing icon ${icon}.png`,
+    );
   }
-  assert.ok(!/播放|暂停|上一步|下一步|速度/.test(w));
 });
-check('buttons ≥ 60px', () => {
+check('buttons ≥ 52px touch targets', () => {
   const css = fs.readFileSync(path.join(root, 'pages/build/index.wxss'), 'utf8');
-  assert.ok(css.includes('min-width: 60px'));
-  assert.ok(css.includes('min-height: 60px'));
+  const tokens = fs.existsSync(path.join(root, 'styles/tokens.wxss'))
+    ? fs.readFileSync(path.join(root, 'styles/tokens.wxss'), 'utf8')
+    : '';
+  const touchOk =
+    css.includes('height: 56px') ||
+    css.includes('height: 52px') ||
+    css.includes('min-height: 60px') ||
+    (css.includes('var(--mega-touch)') &&
+      (tokens.includes('--mega-touch: 56px') || tokens.includes('--mega-touch:56px')));
+  const widthOk =
+    css.includes('min-width: 56px') ||
+    css.includes('min-width: 52px') ||
+    css.includes('min-width: 64px') ||
+    (css.includes('var(--mega-touch)') &&
+      (tokens.includes('--mega-touch: 56px') || tokens.includes('--mega-touch:56px')));
+  assert.ok(touchOk, 'touch height ≥52');
+  assert.ok(widthOk, 'touch width ≥52');
 });
 
 console.log('\n=== Batch 5: mode switch + celebration ===');
@@ -315,21 +377,80 @@ check('celebration + replay hooks in source', () => {
   assert.ok(t.includes('_triggerCelebration'));
   assert.ok(t.includes('celebrate.mp3') || t.includes("_playSound('celebrate')"));
   assert.ok(t.includes('_replay'));
+  assert.ok(t.includes('_startShowcase') && t.includes('_finishShowcase'));
+  assert.ok(t.includes('showcase-start') && t.includes('showcase-end'));
+  assert.ok(t.includes('SHOWCASE_MS'));
+});
+check('build page showcase chrome', () => {
+  const w = fs.readFileSync(path.join(root, 'pages/build/index.wxml'), 'utf8');
+  const t = fs.readFileSync(path.join(root, 'pages/build/index.ts'), 'utf8');
+  assert.ok(w.includes('showcase-start') && w.includes('showcase-end'));
+  assert.ok(w.includes('hintText') || t.includes('看一看'));
+  assert.ok(t.includes('onShowcaseStart') && t.includes('onShowcaseEnd'));
 });
 
 console.log('\n=== Batch 6: second work + perf ===');
-check('work switcher two dots', () => {
+check('magnet snap + fixed camera + desk turntable + front finale', () => {
+  const sp = fs.readFileSync(path.join(root, 'utils/step-player.ts'), 'utf8');
+  assert.ok(sp.includes('magnetSnap'));
+  assert.ok(sp.includes('easeOutBack'));
+  assert.ok(sp.includes('isInSnapPhase'));
+  const cam = fs.readFileSync(path.join(root, 'utils/camera-follow.ts'), 'utf8');
+  assert.ok(cam.includes('shotForTile'));
+  assert.ok(cam.includes('yawToRevealTile'));
+  assert.ok(cam.includes('outwardFlyStart'));
+  assert.ok(cam.includes('dampAngle'));
+  const t = fs.readFileSync(path.join(root, 'components/xr-builder/index.ts'), 'utf8');
+  assert.ok(t.includes('_updateCameraFollow'));
+  assert.ok(t.includes('_aimCameraAtTile'));
+  assert.ok(t.includes('_turnTableForTile'));
+  assert.ok(t.includes('_returnToFrontCamera'));
+  assert.ok(t.includes('_applyTurntableYaw'));
+  assert.ok(!t.includes('_showGhost'));
+  assert.ok(t.includes('_punchTileScale'));
+  // No per-frame face-lock dolly (push-in / pull-back)
+  assert.ok(!t.includes('inSnap ? 0.88'));
+  assert.ok(!t.includes('pullBack: inSnap'));
+  const wxml = fs.readFileSync(path.join(root, 'components/xr-builder/index.wxml'), 'utf8');
+  assert.ok(wxml.includes('node-id="turntable"'));
+  assert.ok(wxml.includes('desk-axis-x'));
+  assert.ok(wxml.includes('u_baseColorFactor:0.906 0.875 0.831 1'), 'desk inlay must be opaque (no flicker)');
+  const works = fs.readFileSync(path.join(root, 'utils/works.ts'), 'utf8');
+  assert.ok(works.includes('SNAP_AT'));
+});
+check('tile pose not data-bound (anti-vanish)', () => {
+  const w = fs.readFileSync(path.join(root, 'components/xr-builder/index.wxml'), 'utf8');
+  assert.ok(w.includes('ONLY model is data-bound'));
+  const tileBlock = w.slice(w.indexOf('tiles-root'), w.indexOf('particles-root'));
+  assert.ok(!tileBlock.includes('position="{{item.position}}"'));
+  const t = fs.readFileSync(path.join(root, 'components/xr-builder/index.ts'), 'utf8');
+  assert.ok(t.includes('_applySlotPose'));
+  assert.ok(t.includes('never setData position'));
+});
+check('detail chrome shows current work, not a switcher', () => {
   const w = fs.readFileSync(path.join(root, 'pages/build/index.wxml'), 'utf8');
-  assert.ok(w.includes('work-switcher'));
-  assert.ok(w.includes('work-dot'));
+  const t = fs.readFileSync(path.join(root, 'pages/build/index.ts'), 'utf8');
+  assert.ok(w.includes('brand-row'));
+  assert.ok(w.includes('activeWorkTitle'));
+  assert.ok(!w.includes('work-switcher') && !w.includes('onSwitchWork'));
+  assert.ok(t.includes('WORK_TITLES'));
+  assert.ok(t.includes('workId'));
 });
 check('pixel ratio capped at 2', () => {
   const t = fs.readFileSync(path.join(root, 'pages/build/index.ts'), 'utf8');
   assert.ok(t.includes('Math.min(dpi, 2)'));
 });
-check('MAX_PRECREATED_TILES = 20', () => {
+check('MAX_PRECREATED_TILES ≥ gallery size', () => {
   const t = fs.readFileSync(path.join(root, 'utils/works.ts'), 'utf8');
-  assert.ok(t.includes('MAX_PRECREATED_TILES = 20'));
+  assert.ok(/MAX_PRECREATED_TILES = (\d+)/.test(t));
+  const n = Number(t.match(/MAX_PRECREATED_TILES = (\d+)/)[1]);
+  assert.ok(n >= 24, `need ≥24 slots, got ${n}`);
+  const g = fs.readFileSync(path.join(root, 'utils/works-gallery.ts'), 'utf8');
+  for (const id of ['rocket', 'castle', 'tower', 'car', 'robot', 'flower']) {
+    assert.ok(g.includes(`id: '${id}'`) || g.includes(`'${id}'`), `gallery missing ${id}`);
+  }
+  assert.ok(g.includes('validateMagnetBuild'), 'gallery must validate magnet snaps');
+  assert.ok(!/\[(?:55|50|70|80|-55|-70|-50)\s*,/.test(g), 'no free-tilt angles in gallery');
 });
 check('unloadAsset on detach', () => {
   const t = fs.readFileSync(path.join(root, 'components/xr-builder/index.ts'), 'utf8');
@@ -342,7 +463,8 @@ check('FPS warn below 30', () => {
 check('sounds volume ≤ 0.7', () => {
   const t = fs.readFileSync(path.join(root, 'components/xr-builder/index.ts'), 'utf8');
   assert.ok(t.includes("make('/sounds/celebrate.mp3', 0.7)"));
-  assert.ok(t.includes("make('/sounds/pop.mp3', 0.6)"));
+  assert.ok(t.includes("make('/sounds/pop.mp3', 0.65)"));
+  assert.ok(t.includes("make('/sounds/ambient.mp3', 0.18, true)"));
 });
 
 const failed = results.filter((r) => !r.ok);

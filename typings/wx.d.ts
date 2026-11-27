@@ -7,11 +7,31 @@ declare const console: {
   info(...args: any[]): void;
 };
 
+declare function setTimeout(handler: () => void, timeout?: number): number;
+declare function clearTimeout(handle: number): void;
+
 declare namespace WechatMiniprogram {
   interface Wx {
     getSystemInfoSync(): SystemInfo;
     createInnerAudioContext(): InnerAudioContext;
     getXrFrameSystem(): any;
+    navigateTo(opt: { url: string }): void;
+    navigateBack(opt?: { delta?: number }): void;
+    switchTab(opt: { url: string }): void;
+    showToast(opt: { title: string; icon?: string }): void;
+    showModal(opt: {
+      title?: string;
+      content?: string;
+      editable?: boolean;
+      placeholderText?: string;
+      confirmText?: string;
+      showCancel?: boolean;
+      success?: (res: { confirm: boolean; content?: string }) => void;
+    }): void;
+  }
+
+  interface Input {
+    detail: { value?: string };
   }
 
   interface SystemInfo {

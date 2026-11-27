@@ -6,10 +6,14 @@
   "scripts": {
     "generate:assets": "python3 scripts/generate_glb.py",
     "generate:sounds": "python3 scripts/generate_sounds.py",
-    "generate": "npm run generate:assets && npm run generate:sounds",
+    "generate:icons": "python3 scripts/generate_toolbar_icons.py",
+    "generate": "npm run generate:assets && npm run generate:sounds && npm run generate:icons",
     "typecheck": "tsc --noEmit",
-    "accept": "node scripts/verify_logic.mjs && node scripts/accept_batches.mjs",
-    "verify": "npm run typecheck && npm run accept"
+    "accept": "node scripts/verify_logic.mjs && node scripts/verify_magnet.mjs && node scripts/accept_batches.mjs && node scripts/qa_ux_gate.mjs && npx --yes tsx scripts/verify_plaza.ts",
+    "validate:gallery": "node scripts/validate_gallery.mjs",
+    "validate:works": "node scripts/validate_gallery.mjs",
+    "verify": "npm run typecheck && npm run accept",
+    "qa:ux": "node scripts/qa_ux_gate.mjs"
   },
   "devDependencies": {
     "typescript": "^5.4.0"

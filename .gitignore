@@ -5,3 +5,5 @@ miniprogram_npm/
 .idea/
 .vscode/
 project.private.config.json
+.venv-house-vis/
+.cursor/

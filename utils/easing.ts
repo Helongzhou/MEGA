@@ -13,6 +13,13 @@ export function easeOutCubic(t: number): number {
   return 1 - Math.pow(1 - p, 3);
 }
 
+/** Overshoot ease — magnet “snap” feel (SnapTiles-ish). */
+export function easeOutBack(t: number, overshoot = 1.55): number {
+  const p = clamp01(t);
+  const c = overshoot;
+  return 1 + (c + 1) * Math.pow(p - 1, 3) + c * Math.pow(p - 1, 2);
+}
+
 export function easeInOutCubic(t: number): number {
   const p = clamp01(t);
   return p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2;

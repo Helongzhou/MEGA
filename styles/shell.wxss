@@ -1,0 +1,150 @@
+@import './tokens.wxss';
+
+.shell {
+  min-height: 100vh;
+  background: #f5efe6;
+  color: #1c1917;
+  box-sizing: border-box;
+  padding: 12px 12px 24px;
+}
+
+.shell__h {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.shell__sub {
+  font-size: 13px;
+  color: #78716c;
+  margin-bottom: 12px;
+  line-height: 1.4;
+}
+
+.chips {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.chip {
+  min-height: 40px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: #fff;
+  border: 2px solid #e7dfd4;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.chip--on {
+  background: #ffe66d;
+  border-color: #f0c94d;
+}
+
+.search {
+  width: 100%;
+  box-sizing: border-box;
+  background: #fff;
+  border-radius: 16px;
+  padding: 12px 14px;
+  margin-bottom: 10px;
+  font-size: 16px;
+  border: 2px solid #e7dfd4;
+}
+
+.card {
+  background: #fff;
+  border-radius: 18px;
+  padding: 14px;
+  margin-bottom: 10px;
+  border: 2px solid #e7dfd4;
+}
+
+.card__title {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.card__meta {
+  margin-top: 4px;
+  font-size: 13px;
+  color: #57534e;
+}
+
+.badge {
+  display: inline-block;
+  margin-right: 6px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #ffe8e6;
+  color: #9f1239;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.badge--ok {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 56px;
+  padding: 8px 0;
+  border-bottom: 1px solid #efe8dc;
+}
+
+.stepper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
+.step {
+  width: 48px;
+  height: 48px;
+  line-height: 48px;
+  text-align: center;
+  border-radius: 14px;
+  background: #ffe66d;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.count {
+  min-width: 36px;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.btn {
+  min-height: 48px;
+  line-height: 48px;
+  text-align: center;
+  border-radius: 16px;
+  background: #1c1917;
+  color: #fafaf9;
+  font-weight: 700;
+  margin-top: 10px;
+}
+
+.btn--ghost {
+  background: #fff;
+  color: #1c1917;
+  border: 2px solid #e7dfd4;
+}
+
+.empty {
+  padding: 28px 8px;
+  text-align: center;
+  color: #78716c;
+  font-size: 15px;
+}

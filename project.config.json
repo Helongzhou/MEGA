@@ -7,7 +7,7 @@
   "setting": {
     "bundle": false,
     "userConfirmedBundleSwitch": false,
-    "urlCheck": true,
+    "urlCheck": false,
     "scopeDataCheck": false,
     "coverView": true,
     "es6": true,
@@ -39,16 +39,22 @@
       "outputPath": ""
     },
     "condition": false,
-    "compileWorklet": false
+    "compileWorklet": false,
+    "localPlugins": false,
+    "disableUseStrict": false,
+    "useCompilerPlugins": [
+      "typescript"
+    ]
   },
   "compileType": "miniprogram",
-  "libVersion": "2.32.0",
-  "appid": "touristappid",
+  "libVersion": "3.18.0",
+  "appid": "wx861620269b179b2d",
   "projectname": "magnet-tile-builder",
   "condition": {},
   "editorSetting": {
     "tabIndent": "insertSpaces",
     "tabSize": 2
   },
-  "simulatorPluginLibVersion": {}
+  "simulatorPluginLibVersion": {},
+  "isGameTourist": false
 }

@@ -1,0 +1,81 @@
+<view class="clay-page">
+  <view class="hello">
+    <text class="hello__hi">嗨，小小建筑师</text>
+    <text class="clay-h">今天准备好搭建超酷的作品了吗？</text>
+    <text class="age">4岁以上就能玩</text>
+  </view>
+
+  <view class="cats clay-card">
+    <view
+      wx:for="{{homeCats}}"
+      wx:key="id"
+      class="cat {{homeCat === item.id ? 'cat--on' : ''}}"
+      data-id="{{item.id}}"
+      catchtap="onHomeCat"
+    >{{item.label}}</view>
+  </view>
+
+  <view class="goal">
+    <view class="goal__body">
+      <text class="goal__title">今日搭建</text>
+      <text class="goal__sub">拼完一个，就来记一笔</text>
+      <view class="goal__bar">
+        <view class="goal__fill" style="width: {{goalPct}}%;"></view>
+      </view>
+      <text class="goal__count">{{goalText}}</text>
+    </view>
+  </view>
+
+  <block wx:if="{{continueCard}}">
+    <view class="block-h">
+      <text class="clay-h block-h__t">接着拼</text>
+    </view>
+    <view class="clay-card continue" data-id="{{continueCard.id}}" catchtap="onOpen">
+      <view class="continue__art" style="background: {{continueCard.bg}};"></view>
+      <view class="continue__body">
+        <text class="continue__name">{{continueCard.title}}</text>
+        <text class="clay-sub">{{continueCard.meta}}</text>
+      </view>
+      <view class="play">开始搭建</view>
+    </view>
+  </block>
+
+  <view class="block-h">
+    <text class="clay-h block-h__t">为你推荐</text>
+  </view>
+  <input class="search" placeholder="搜一搜：小房子、小花、城堡" value="{{keyword}}" bindinput="onSearch" />
+  <scroll-view class="chip-scroll" scroll-x enable-flex show-scrollbar="{{false}}">
+    <view class="chip-row">
+      <view class="pill {{onlyBuildable ? 'pill--on' : ''}}" catchtap="onOnly">只看现有磁力片能拼的</view>
+      <view
+        wx:for="{{sorts}}"
+        wx:key="id"
+        class="pill {{sort === item.id ? 'pill--on' : ''}}"
+        data-id="{{item.id}}"
+        catchtap="onSort"
+      >{{item.label}}</view>
+    </view>
+  </scroll-view>
+
+  <view wx:if="{{!cards.length}}" class="clay-card empty">这个分类里还没有作品，换一个看看。</view>
+  <view wx:else class="grid">
+    <view wx:for="{{cards}}" wx:key="id" class="clay-card tile" data-id="{{item.id}}" catchtap="onOpen">
+      <view class="tile__art" style="background: {{item.bg}};">
+        <text wx:if="{{item.hot}}" class="badge badge--hot">热门</text>
+        <text class="badge badge--piece {{item.buildable ? 'badge--ok' : ''}}">{{item.pieceText}}</text>
+      </view>
+      <text class="tile__name">{{item.title}}</text>
+      <text class="clay-sub">{{item.meta}}</text>
+      <text class="clay-sub">{{item.heat}}</text>
+    </view>
+  </view>
+
+  <view wx:if="{{publicOn}}" class="block-h">
+    <text class="clay-h block-h__t">大家拼过的</text>
+  </view>
+  <view wx:if="{{publicOn && !publicRows.length}}" class="clay-card empty">还没有人愿意公开作品。</view>
+  <view wx:for="{{publicRows}}" wx:key="id" class="clay-card empty">
+    <text class="tile__name">{{item.title}}</text>
+    <text class="clay-sub">{{item.note}}</text>
+  </view>
+</view>
