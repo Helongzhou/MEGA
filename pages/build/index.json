@@ -1,0 +1,7 @@
+{
+  "usingComponents": {
+    "xr-builder": "../../components/xr-builder/index"
+  },
+  "disableScroll": true,
+  "navigationStyle": "custom"
+}

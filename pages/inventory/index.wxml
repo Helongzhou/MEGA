@@ -1,0 +1,60 @@
+<view class="clay-page">
+  <text class="clay-h">我的磁力片</text>
+  <text class="clay-sub lead">调一调手里的磁力片数量，勾选多套可以合在一起算哦！</text>
+
+  <view class="hero">
+    <view class="hero__left">
+      <text class="hero__num">{{totalPieces}}</text>
+      <text class="hero__unit">片</text>
+    </view>
+    <view class="hero__right">
+      <text class="hero__sub">现在能拼 {{canCount}} 个作品</text>
+      <text class="hero__line">{{summary}}</text>
+    </view>
+  </view>
+
+  <view class="kits clay-card">
+    <view wx:for="{{kits}}" wx:key="id" class="kit">
+      <text class="kit__name {{kitId === item.id ? 'kit__name--on' : ''}}" data-id="{{item.id}}" catchtap="onPickKit">{{item.name}}</text>
+      <switch checked="{{item.included}}" color="#7868F0" data-id="{{item.id}}" bindchange="onInclude" />
+    </view>
+  </view>
+  <text class="hint">打开的套会计入上面的总数</text>
+
+  <text class="section">方片、窗和长条</text>
+  <view class="grid">
+    <view wx:for="{{family75}}" wx:key="id" class="shape clay-card">
+      <view class="face face--{{item.face}}" style="--face: {{item.color}};">
+        <view class="face__glyph"></view>
+      </view>
+      <text class="shape__name">{{item.name}}</text>
+      <view class="stepper">
+        <view class="step" data-shape="{{item.id}}" data-delta="-1" catchtap="onBump">−</view>
+        <text class="count">{{item.count}}</text>
+        <view class="step" data-shape="{{item.id}}" data-delta="1" catchtap="onBump">+</view>
+      </view>
+    </view>
+  </view>
+
+  <text class="section">正三角和六边形</text>
+  <view class="grid">
+    <view wx:for="{{family71}}" wx:key="id" class="shape clay-card">
+      <view class="face face--{{item.face}}" style="--face: {{item.color}};">
+        <view class="face__glyph"></view>
+      </view>
+      <text class="shape__name">{{item.name}}</text>
+      <view class="stepper">
+        <view class="step" data-shape="{{item.id}}" data-delta="-1" catchtap="onBump">−</view>
+        <text class="count">{{item.count}}</text>
+        <view class="step" data-shape="{{item.id}}" data-delta="1" catchtap="onBump">+</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="promo" catchtap="onPhotoPromo">
+    <text class="promo__title">拍包装盒识片数（即将上线）</text>
+    <text class="promo__sub">拍下盒子，以后帮你数片</text>
+  </view>
+  <view class="danger" catchtap="onReset">清空库存</view>
+  <view class="ghost" catchtap="onAddKit">再加一套</view>
+</view>

@@ -1,0 +1,32 @@
+@import '../../styles/clay.wxss';
+
+.lead { display: block; margin: 12rpx 0 28rpx; }
+.card { padding: 8rpx 28rpx; }
+.row {
+  min-height: 108rpx;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16rpx;
+  border-bottom: 1rpx solid #f0eff7;
+  font-size: 30rpx;
+  font-weight: 800;
+}
+.row:last-child { border-bottom: none; }
+.row__text { display: flex; flex-direction: column; padding: 16rpx 0; }
+.row__sub { margin-top: 6rpx; font-size: 22rpx; font-weight: 700; color: #8a8e9e; }
+.about { margin-top: 24rpx; padding: 28rpx; }
+.about__title { display: block; font-size: 32rpx; font-weight: 800; }
+.about__body { display: block; margin-top: 10rpx; font-size: 26rpx; line-height: 1.5; color: #4b5066; }
+.danger {
+  margin-top: 48rpx;
+  height: 88rpx;
+  line-height: 88rpx;
+  text-align: center;
+  border-radius: 999rpx;
+  color: #b91c1c;
+  background: #fff;
+  font-size: 30rpx;
+  font-weight: 800;
+}

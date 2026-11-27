@@ -1,0 +1,50 @@
+{
+  "pages": [
+    "pages/plaza/index",
+    "pages/inventory/index",
+    "pages/diary/index",
+    "pages/settings/index",
+    "pages/build/index"
+  ],
+  "window": {
+    "navigationBarTitleText": "磁力片奇趣搭建",
+    "navigationStyle": "custom",
+    "backgroundColor": "#f6f5fa",
+    "backgroundColorTop": "#ece9f7",
+    "backgroundColorBottom": "#f6f5fa"
+  },
+  "tabBar": {
+    "color": "#9aa0b5",
+    "selectedColor": "#6d5ce7",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/plaza/index",
+        "text": "首页",
+        "iconPath": "assets/icons/tab-plaza.png",
+        "selectedIconPath": "assets/icons/tab-plaza-on.png"
+      },
+      {
+        "pagePath": "pages/inventory/index",
+        "text": "片盒",
+        "iconPath": "assets/icons/tab-box.png",
+        "selectedIconPath": "assets/icons/tab-box-on.png"
+      },
+      {
+        "pagePath": "pages/diary/index",
+        "text": "成就",
+        "iconPath": "assets/icons/tab-diary.png",
+        "selectedIconPath": "assets/icons/tab-diary-on.png"
+      },
+      {
+        "pagePath": "pages/settings/index",
+        "text": "我的",
+        "iconPath": "assets/icons/tab-gear.png",
+        "selectedIconPath": "assets/icons/tab-gear-on.png"
+      }
+    ]
+  },
+  "lazyCodeLoading": "requiredComponents",
+  "sitemapLocation": "sitemap.json"
+}

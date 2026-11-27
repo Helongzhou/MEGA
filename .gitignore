@@ -1,0 +1,9 @@
+node_modules/
+.DS_Store
+*.log
+miniprogram_npm/
+.idea/
+.vscode/
+project.private.config.json
+.venv-house-vis/
+.cursor/

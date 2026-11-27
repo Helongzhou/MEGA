@@ -1,0 +1,46 @@
+<view class="clay-page">
+  <text class="clay-h">太棒了，你是搭建之星</text>
+  <text class="clay-sub lead">坚持每天动手搭，这些记录只有自己看得到。</text>
+
+  <view class="clay-card stats">
+    <view class="stat">
+      <text class="clay-sub">拼过的作品</text>
+      <text class="stat__n">{{lit}}</text>
+    </view>
+    <view class="stat">
+      <text class="clay-sub">连续天数</text>
+      <text class="stat__n">{{streak}}</text>
+    </view>
+    <view class="stat">
+      <text class="clay-sub">点亮徽章</text>
+      <text class="stat__n">{{badgeLit}}</text>
+    </view>
+  </view>
+
+  <text class="section">我的徽章</text>
+  <view class="badges">
+    <view wx:for="{{badges}}" wx:key="id" class="badge {{item.on ? '' : 'badge--off'}}">
+      <text class="badge__name">{{item.name}}</text>
+      <text class="clay-sub">{{item.hint}}</text>
+    </view>
+  </view>
+
+  <text class="section">搭建记录</text>
+  <view wx:if="{{!rows.length}}" class="clay-card empty">
+    <text>还没有搭建记录呢，快去挑个作品动手试试吧！</text>
+    <view class="purple-btn go" catchtap="onGoPlaza">去首页挑一个作品</view>
+  </view>
+
+  <view wx:for="{{rows}}" wx:key="id" class="clay-card card">
+    <view wx:if="{{item.photo}}" class="card__photo" style="background-image: url({{item.photo}});"></view>
+    <view wx:else class="card__photo card__photo--blank"></view>
+    <text class="card__title">{{item.title}}</text>
+    <text class="clay-sub">{{item.when}}</text>
+    <text class="card__note">{{item.note}}</text>
+    <view class="card__row">
+      <text>愿意公开</text>
+      <switch checked="{{item.wantPublic}}" color="#7868F0" data-id="{{item.id}}" bindchange="onPublic" />
+    </view>
+    <view class="purple-btn go go--slim" data-work="{{item.workId}}" catchtap="onRebuild">再搭一次</view>
+  </view>
+</view>
