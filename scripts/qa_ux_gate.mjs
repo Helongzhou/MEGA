@@ -100,6 +100,21 @@ if (!wxss.includes('tokens.wxss') && !wxss.includes('var(--mega-chrome)')) {
   fail('build page wxss must use design tokens');
 }
 
+// Tab home (plaza) relies on native page scroll; global page overflow:hidden blocks it.
+const appWxss = fs.readFileSync(path.join(root, 'app.wxss'), 'utf8');
+const appWxssCode = appWxss.replace(/\/\*[\s\S]*?\*\//g, '');
+const pageBlock = appWxssCode.match(/page\s*\{[^}]*\}/);
+// Only ban unqualified overflow:hidden (overflow-x:hidden is fine).
+if (pageBlock && /(^|[^-\w])overflow\s*:\s*hidden\b/.test(pageBlock[0])) {
+  fail('app.wxss page must not use overflow:hidden (blocks plaza/home scroll)');
+}
+const buildJson = JSON.parse(
+  fs.readFileSync(path.join(root, 'pages/build/index.json'), 'utf8'),
+);
+if (!buildJson.disableScroll) {
+  fail('build page must keep disableScroll so XR stage does not bounce-scroll');
+}
+
 if (failures.length) {
   console.error('UX GATE FAILED:');
   failures.forEach((f) => console.error(' -', f));
